@@ -1,0 +1,14 @@
+CD(TMD):		e0			Id0			p0
+TMD2_loose		0.975		0.21		100
+TMD3_loose		0.975		0.21		200
+TMD4_loose		0.97		0.22		300
+TMD2_dense		0.735		0.85		100
+TMD3_dense		0.706		0.92		200
+TMD4_dense		0.697		0.95		300
+
+
+CU(TMU):		e0			Id0			p0
+TMU1			0.828		0.6			100
+TMU2			0.814		0.64		200
+TMU3			0.822		0.62		300
+		

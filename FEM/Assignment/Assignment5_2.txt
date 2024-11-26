@@ -1,0 +1,93 @@
+/clear
+/title, 
+
+!!!Preprocessing
+/prep7                                           ! start preprocessor
+
+!reverse video (to make background white instead of black)
+/RGB,INDEX,100,100,100,0
+/RGB,INDEX,80,80,80,13
+/RGB,INDEX,60,60,60,14
+/RGB,INDEX,0,0,0,15
+
+!!!Material definition
+MP,EX,1,190000   ! N/mm^2  !Young's Modulus
+MP,NUXY,1,0.3                  ! Poisson's ratio
+
+
+!!! Geometry definition
+!Units in mm
+K,1,  0,0,0
+K,2,  100,400,0
+K,3,  180,400,0
+K,4,  500,400,0
+K,5,  720,400,0
+K,6,  1160,400,0
+K,7,  870,170,0
+K,8,  1140,0,0
+
+L,1,3 !line created using keypoints 1 & 3
+L,2,3 !line created using keypoints 2 & 3
+L,3,4 !line created using keypoints 3 & 4
+L,4,5 !line created using keypoints 4 & 5
+L,4,7 !line created using keypoints 4 & 5
+L,5,6 !line created using keypoints 5 & 6
+L,5,7 !line created using keypoints 5 & 7
+L,7,8 !line created using keypoints 5 & 6
+!plot lines
+LPLOT
+
+
+!!! Element definition
+
+ET,1,BEAM189      !element type 180 = 2 nodes, 3 DOF per node
+SECTYPE,1,BEAM,RECT   !define cross section to be rectangular for link element
+SECDATA,40,40        !40 mm x 40 mm cross section
+
+
+
+LESIZE,ALL,,,1      ! only line element per line for all lines
+Lmesh,all             ! mesh all lines selected
+eplot
+
+
+!!! Solution
+/solu                    ! start solution phase
+antype,static       ! static analysis
+outres,all,all        ! save results of all iterations
+
+
+!Boundary conditions
+d,all,UZ,0                 ! constrain all nodes in out of plane direction(i.e.,z-direction)
+nsel,s,loc,X,0.0         ! select all nodes in plane x=0
+d,all,all,0                  ! constrain node at this location in all directions
+nsel,s,loc,X,1140.0  ! select all nodes in plane x=1140
+d,all,all,0                  ! constrain at this location in all directions
+!csys,0			  ! fix bottom of the support structure
+
+
+
+!Load
+nsel,s,loc,Y,400       ! select all nodes in plane y=400
+F,all,FY,-117            !N !apply a force of -117 in y direction for all selected nodes
+
+allsel,all                   ! select everything
+! show boundary conditions
+\PBC,all,,1
+
+allsel,all                   ! select all nodes, lines, areas, volumes and elements
+
+solve
+
+finish
+
+
+!!! Postprocessing
+/post1
+set,last
+PLNSOL,U,Y             ! plot vertical displacement
+PLESOL,SMISC,1      ! plot axial stress in beam members
+PLESOL,SMISC,3      ! plot bending stress in beam members
+
+!/dscale,,1  !this command can be used to change the exaggeration of the displaced structure
+            !for a multiplier of 1, the displaced structure is at true scale 
